@@ -1,0 +1,63 @@
+variable temperature equal 310
+variable randomSeed equal XXX
+variable numHostChains equal YYY # Number of host chains
+
+# Initialise parameters for units and box type
+units       real
+dimension   3
+boundary    p p p
+atom_style  full
+
+# Initial pair style and bond parameters
+bond_style  harmonic
+
+dielectric  80.0
+
+# Load simulation configuration
+read_data   initial_config.dat
+
+# Set pair parameters
+include         /home/yw9071/scripts/RNA_flux_project/potential_60_particle_types.dat
+
+# Create cavity and protein groups
+group cavity molecule == 1
+group proteins molecule > 1
+
+variable filter2 equal ${numHostChains}+2
+group host_chains molecule <> 1 ${filter2} # Host chains
+
+variable filter1 equal ${numHostChains}+1
+group guest_chains molecule > ${filter1} # Guest chains
+
+# Assign velocities to particles
+velocity        proteins create ${temperature} ${randomSeed}
+
+special_bonds fene
+
+# Neighbour list settings
+neighbor  3.5 multi
+neigh_modify    every 10 delay 0
+
+# Timestep and computational parameters
+comm_style      tiled
+timestep        10 # fs
+
+fix             fxnve   proteins nve
+fix             fxlange proteins langevin ${temperature} ${temperature} 100000.0 ${randomSeed}
+fix             fxbal  proteins balance 1000 1.1 rcb
+
+# Thermo output settings
+thermo          1000
+thermo_style    custom step temp density ecoul ke pe etotal
+thermo_modify   flush yes
+
+# Dump particle data for later analysis
+# Host and guest chains
+dump 1 all custom 500000 equilibrate.lammpstrj id mol type q xu yu zu #unwrapped coordinates
+dump_modify 1 sort id
+
+# Run simulation
+run 4000000 # 40 ns equilibration
+
+# Write final configuration
+write_data equilbrated_initial_config.dat nocoeff # nocoeff ensures that we don't write the force field info.

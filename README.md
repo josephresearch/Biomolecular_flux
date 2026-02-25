@@ -6,7 +6,7 @@ Data repository for "Non-equilibrium modeling of directed flux through biomolecu
   Directory containing all the data files required for reproducing the main manuscript figures -- Flux times, mean squared displacements, pore size distributions, radius of gyration, contact maps.
 
 * **force-field**<br>
-  Force field parameters compatibale with LAMMPS for the flux simulations with native mpipi parameters `potential_60_particle_types.dat`, and reduced interactions `potential_60_particle_types_handoff_mech_weaker_G.dat`. Vanilla mpipi simulations (20 particle types) can be performed with the `potential.dat` force field file. 
+  Force field parameters compatibale with LAMMPS (version: stable_29Aug2024) for the flux simulations with native mpipi parameters `potential_60_particle_types.dat`, and reduced interactions `potential_60_particle_types_handoff_mech_weaker_G.dat`. Vanilla mpipi simulations (20 particle types) can be performed with the `potential.dat` force field file. 
   
 * **scripts**<br>
   Necessary script for performing flux simulations.<br>
